@@ -1,0 +1,34 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        google()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.2.0'
+    }
+}
+
+allprojects {
+    apply plugin: "eclipse"
+    apply plugin: "idea"
+
+    version = '1.0'
+    ext {
+        appName = 'TibiaGame'
+        gdxVersion = '1.12.1'
+        roboVMVersion = '2.3.21'
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        google()
+        gradlePluginPortal()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

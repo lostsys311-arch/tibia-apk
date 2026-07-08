@@ -1,0 +1,13 @@
+*.class
+*.apk
+*.ap_
+*.dex
+*.iml
+.gradle/
+build/
+local.properties
+.DS_Store
+Thumbs.db
+.idea/
+*.log
+*~
