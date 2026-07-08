@@ -22,6 +22,8 @@ public class GameScreen implements Screen {
     private static final float SPAWN_INTERVAL = 5.0f;
     private float attackTimer;
     private static final float ATTACK_COOLDOWN = 0.5f;
+    private float attackAnimTimer;
+    private static final float ATTACK_ANIM_DURATION = 0.2f;
 
     public GameScreen(TibiaGame game) {
         this.game = game;
@@ -48,7 +50,7 @@ public class GameScreen implements Screen {
 
             if (!map.isSolidTile(sx, sy) &&
                 Math.abs(sx - player.x) > 200) {
-                int level = 1 + (int)(Math.random() * player.level);
+                int level = 1 + (int)(Math.random() * Math.min(5, player.level));
                 monsters.add(new Monster(map, sx, sy, level));
                 return;
             }
@@ -69,9 +71,13 @@ public class GameScreen implements Screen {
         }
 
         attackTimer -= delta;
+        attackAnimTimer -= delta;
+
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT) && attackTimer <= 0) {
             performAttack();
             attackTimer = ATTACK_COOLDOWN;
+            attackAnimTimer = ATTACK_ANIM_DURATION;
+            game.sound.playAttack();
         }
 
         Iterator<Monster> it = monsters.iterator();
@@ -80,27 +86,50 @@ public class GameScreen implements Screen {
             m.update(delta, player, monsters);
             if (m.health <= 0) {
                 player.addExp(m.expReward);
+                game.sound.playDeath();
                 it.remove();
             }
+        }
+
+        if (player.health <= 0) {
+            game.sound.playHit();
         }
 
         camera.position.set(player.x + 12, player.y + 12, 0);
         camera.update();
 
+        game.batch.setProjectionMatrix(camera.combined);
+        game.batch.begin();
+        map.render(game.batch, game.art, camera.position.x - 400, camera.position.y - 300);
+        for (Monster m : monsters) {
+            m.render(game.batch, game.art);
+        }
+        player.render(game.batch, game.art);
+
+        if (attackAnimTimer > 0) {
+            float ax = player.x + 4;
+            float ay = player.y + 8;
+            game.batch.draw(game.art.attackTex, ax, ay, 28, 28);
+        }
+        game.batch.end();
+
         sr.setProjectionMatrix(camera.combined);
         sr.begin(ShapeRenderer.ShapeType.Filled);
-        map.render(sr, camera.position.x - 400, camera.position.y - 300);
         for (Monster m : monsters) {
-            m.render(sr);
+            m.renderBar(sr);
         }
-        player.render(sr);
+        player.renderBars(sr);
         sr.end();
 
         sr.setProjectionMatrix(camera.view.scl(1).cpy());
         sr.begin(ShapeRenderer.ShapeType.Filled);
         player.renderHUD(sr, 800, 600);
-        renderInfo(sr);
         sr.end();
+
+        game.batch.setProjectionMatrix(camera.view.scl(1).cpy());
+        game.batch.begin();
+        renderInfo();
+        game.batch.end();
     }
 
     private void handleInput() {
@@ -122,16 +151,20 @@ public class GameScreen implements Screen {
             if (dist < range) {
                 int dmg = 8 + (int)(Math.random() * 5) + player.level;
                 m.health -= dmg;
+                game.sound.playHit();
             }
         }
     }
 
-    private void renderInfo(ShapeRenderer sr) {
+    private void renderInfo() {
         String info = "Lv." + player.level + " | EXP: " + player.exp + "/" + player.expToNext;
         game.font.setColor(Color.WHITE);
         game.font.draw(game.batch, info, 10, 40);
         game.font.draw(game.batch, "Monsters: " + monsters.size(), 10, 20);
         game.font.draw(game.batch, "Click to attack | WASD to move", 10, 580);
+        if (player.health <= 0) {
+            game.font.draw(game.batch, "YOU DIED! Press ESC to exit", 300, 300);
+        }
     }
 
     @Override

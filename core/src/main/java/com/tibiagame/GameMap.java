@@ -1,7 +1,6 @@
 package com.tibiagame;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import java.util.List;
 import java.util.ArrayList;
@@ -91,7 +90,7 @@ public class GameMap {
         return Tiles.isSolid(getTile(tx, ty));
     }
 
-    public void render(ShapeRenderer sr, float cameraX, float cameraY) {
+    public void render(SpriteBatch batch, Art art, float cameraX, float cameraY) {
         int startX = Math.max(0, (int)(cameraX / TILE_SIZE) - 1);
         int endX = Math.min(WIDTH, startX + 30);
         int startY = Math.max(0, (int)(cameraY / TILE_SIZE) - 1);
@@ -101,30 +100,7 @@ public class GameMap {
             for (int y = startY; y < endY; y++) {
                 float px = x * TILE_SIZE;
                 float py = y * TILE_SIZE;
-
-                switch (tiles[x][y]) {
-                    case Tiles.GRASS:
-                        sr.setColor(0.2f, 0.7f, 0.1f, 1);
-                        break;
-                    case Tiles.DIRT:
-                        sr.setColor(0.55f, 0.4f, 0.2f, 1);
-                        break;
-                    case Tiles.WATER:
-                        sr.setColor(0.1f, 0.4f, 0.8f, 1);
-                        break;
-                    case Tiles.TREE:
-                        sr.setColor(0.1f, 0.5f, 0.05f, 1);
-                        sr.rect(px, py, TILE_SIZE, TILE_SIZE);
-                        sr.setColor(0.05f, 0.35f, 0.02f, 1);
-                        break;
-                    case Tiles.WALL:
-                        sr.setColor(0.4f, 0.35f, 0.3f, 1);
-                        break;
-                    case Tiles.BRICK:
-                        sr.setColor(0.5f, 0.2f, 0.1f, 1);
-                        break;
-                }
-                sr.rect(px, py, TILE_SIZE, TILE_SIZE);
+                batch.draw(art.tileTex[tiles[x][y]], px, py, TILE_SIZE, TILE_SIZE);
             }
         }
     }

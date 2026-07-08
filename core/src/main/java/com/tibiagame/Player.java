@@ -3,6 +3,8 @@ package com.tibiagame;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class Player {
@@ -57,19 +59,21 @@ public class Player {
         }
     }
 
-    public void render(ShapeRenderer sr) {
-        sr.setColor(Color.YELLOW);
-        sr.rect(x, y, size, size);
+    public void render(SpriteBatch batch, Art art) {
+        batch.draw(art.playerTex, x, y, size, 32);
+    }
 
+    public void renderBars(ShapeRenderer sr) {
+        float barY = y + 34;
         sr.setColor(Color.WHITE);
-        sr.rect(x, y + size + 4, size, 4);
+        sr.rect(x, barY, size, 4);
         sr.setColor(Color.RED);
-        sr.rect(x, y + size + 4, size * health / maxHealth, 4);
+        sr.rect(x, barY, size * health / maxHealth, 4);
 
         sr.setColor(Color.WHITE);
-        sr.rect(x, y + size + 10, size, 3);
+        sr.rect(x, barY + 6, size, 3);
         sr.setColor(Color.BLUE);
-        sr.rect(x, y + size + 10, size * mana / maxMana, 3);
+        sr.rect(x, barY + 6, size * mana / maxMana, 3);
     }
 
     public void renderHUD(ShapeRenderer sr, float viewWidth, float viewHeight) {

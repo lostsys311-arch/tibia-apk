@@ -1,9 +1,9 @@
 package com.tibiagame;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import java.util.List;
-import java.util.ArrayList;
 
 public class Monster {
     public float x, y;
@@ -76,10 +76,11 @@ public class Monster {
         }
     }
 
-    public void render(ShapeRenderer sr) {
-        sr.setColor(Color.RED);
-        sr.rect(x, y, size, size);
+    public void render(SpriteBatch batch, Art art) {
+        batch.draw(art.monsterTex, x, y, size, size);
+    }
 
+    public void renderBar(ShapeRenderer sr) {
         sr.setColor(Color.WHITE);
         sr.rect(x, y + size + 2, size, 3);
         sr.setColor(Color.GREEN);
