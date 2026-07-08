@@ -5,19 +5,20 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 public class SoundManager {
     public Sound hitSound;
     public Sound attackSound;
     public Sound deathSound;
     public Sound levelUpSound;
+    private FileHandle tempDir;
 
     public SoundManager() {
-        hitSound = generateWav(220, 0.15f, 0.3f);
-        attackSound = generateWav(440, 0.1f, 0.5f);
-        deathSound = generateWav(120, 0.3f, 0.6f);
+        tempDir = Gdx.files.local(".tibia_sounds");
+        tempDir.mkdirs();
+        hitSound = generateWav(220, 0.15f, 0.3f, "hit.wav");
+        attackSound = generateWav(440, 0.1f, 0.5f, "attack.wav");
+        deathSound = generateWav(120, 0.3f, 0.6f, "death.wav");
         levelUpSound = generateChime();
     }
 
@@ -26,7 +27,7 @@ public class SoundManager {
     public void playDeath() { if (deathSound != null) deathSound.play(0.6f); }
     public void playLevelUp() { if (levelUpSound != null) levelUpSound.play(0.7f); }
 
-    private Sound generateWav(float freqHz, float durationSec, float volume) {
+    private Sound generateWav(float freqHz, float durationSec, float volume, String name) {
         try {
             int sampleRate = 22050;
             int numSamples = (int)(sampleRate * durationSec);
@@ -39,7 +40,9 @@ public class SoundManager {
                 samples[i] = (short)(sample * Short.MAX_VALUE);
             }
             byte[] wav = buildWav(samples, sampleRate);
-            return Gdx.audio.newSound(new WavFileHandle(wav));
+            FileHandle f = tempDir.child(name);
+            f.writeBytes(wav, false);
+            return Gdx.audio.newSound(f);
         } catch (Exception e) {
             return null;
         }
@@ -63,7 +66,9 @@ public class SoundManager {
                 samples[i] = (short)(sample * Short.MAX_VALUE);
             }
             byte[] wav = buildWav(samples, sampleRate);
-            return Gdx.audio.newSound(new WavFileHandle(wav));
+            FileHandle f = tempDir.child("levelup.wav");
+            f.writeBytes(wav, false);
+            return Gdx.audio.newSound(f);
         } catch (Exception e) {
             return null;
         }
@@ -105,21 +110,14 @@ public class SoundManager {
         dos.write((v >> 8) & 0xff);
     }
 
-    private static class WavFileHandle extends FileHandle {
-        private byte[] data;
-        public WavFileHandle(byte[] data) { this.data = data; }
-        @Override
-        public ByteBuffer map() { return ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN); }
-        @Override
-        public long length() { return data.length; }
-        @Override
-        public boolean isFile() { return true; }
-    }
-
     public void dispose() {
         if (hitSound != null) hitSound.dispose();
         if (attackSound != null) attackSound.dispose();
         if (deathSound != null) deathSound.dispose();
         if (levelUpSound != null) levelUpSound.dispose();
+        if (tempDir != null && tempDir.isDirectory()) {
+            for (FileHandle child : tempDir.list()) child.delete();
+            tempDir.delete();
+        }
     }
 }

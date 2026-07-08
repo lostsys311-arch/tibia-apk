@@ -1,9 +1,7 @@
 package com.tibiagame;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Art {
     public Texture playerTex;
@@ -27,14 +25,14 @@ public class Art {
         Pixmap p = new Pixmap(24, 32, Pixmap.Format.RGBA8888);
         p.setColor(0.9f, 0.8f, 0.1f, 1);
         p.fillCircle(12, 8, 6);
-        p.fillRect(8, 14, 8, 12);
-        p.fillRect(5, 18, 4, 10);
-        p.fillRect(15, 18, 4, 10);
+        p.fillRectangle(8, 14, 8, 12);
+        p.fillRectangle(5, 18, 4, 10);
+        p.fillRectangle(15, 18, 4, 10);
         p.setColor(0.2f, 0.2f, 0.2f, 1);
         p.fillCircle(9, 7, 1);
         p.fillCircle(15, 7, 1);
         p.setColor(0.8f, 0.6f, 0.1f, 1);
-        p.fillRect(9, 4, 6, 3);
+        p.fillRectangle(9, 4, 6, 3);
         Texture t = new Texture(p);
         p.dispose();
         return t;
@@ -44,7 +42,7 @@ public class Art {
         Pixmap p = new Pixmap(20, 20, Pixmap.Format.RGBA8888);
         p.setColor(0.8f, 0.1f, 0.1f, 1);
         p.fillCircle(10, 8, 8);
-        p.fillRect(6, 8, 8, 8);
+        p.fillRectangle(6, 8, 8, 8);
         p.setColor(1, 1, 1, 1);
         p.fillCircle(6, 6, 2);
         p.fillCircle(14, 6, 2);
@@ -119,7 +117,7 @@ public class Art {
         p.setColor(0.15f, 0.5f, 0.05f, 1);
         p.fill();
         p.setColor(0.4f, 0.25f, 0.1f, 1);
-        p.fillRect(13, 4, 6, 12);
+        p.fillRectangle(13, 4, 6, 12);
         p.setColor(0.05f, 0.35f, 0.02f, 1);
         p.fillCircle(16, 18, 12);
         p.setColor(0.1f, 0.45f, 0.05f, 1);
